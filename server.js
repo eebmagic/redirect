@@ -21,7 +21,7 @@ const REDIRECT_MAPPINGS = JSON.parse(
 // Create the server
 const server = http.createServer((req, res) => {
   const url = new URL(req.url, `http://${req.headers.host}`);
-  console.log(`catching from: ${url}`);
+  console.log(`[${new Date().toISOString()}] catching from: ${url}`);
 
   // Check for special redirect parameter
   const environment = url.searchParams.get('environment');
@@ -49,7 +49,7 @@ const server = http.createServer((req, res) => {
       return;
     }
 
-    console.log(`redirecting to mapped URL: ${mappedUrl.toString()}`);
+    console.log(`[${new Date().toISOString()}] redirecting to mapped URL: ${mappedUrl.toString()}`);
     res.writeHead(307, { Location: mappedUrl.toString() });
     res.end(`Redirecting to ${mappedUrl.toString()}`);
     return;
@@ -57,7 +57,7 @@ const server = http.createServer((req, res) => {
 
   // Original redirect logic
   const redirectUrl = url.pathname.substring(1) + url.search;
-  console.log(`redirecting to: ${redirectUrl}`);
+  console.log(`[${new Date().toISOString()}] redirecting to: ${redirectUrl}`);
 
   if (redirectUrl) {
     res.writeHead(307, { Location: redirectUrl });
@@ -72,7 +72,7 @@ const server = http.createServer((req, res) => {
 const PORT = 3021;
 server.listen(PORT, () => {
   const gitHash = getGitHash();
-  console.log(`Running git hash version: ${gitHash}`);
-  console.log(`Redirect server running on http://localhost:${PORT}`);
+  console.log(`[${new Date().toISOString()}] Running git hash version: ${gitHash}`);
+  console.log(`[${new Date().toISOString()}] Redirect server running on http://localhost:${PORT}`);
 });
 
