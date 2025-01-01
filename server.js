@@ -2,6 +2,16 @@ const http = require('http');
 const { URL } = require('url');
 const fs = require('fs');
 const path = require('path');
+const { execSync } = require('child_process');
+
+// Add function to get git hash
+const getGitHash = () => {
+  try {
+    return execSync('git rev-parse HEAD').toString().trim();
+  } catch (error) {
+    return 'Git hash unavailable';
+  }
+};
 
 // Load redirect mappings from JSON file
 const REDIRECT_MAPPINGS = JSON.parse(
@@ -61,6 +71,8 @@ const server = http.createServer((req, res) => {
 // Start the server
 const PORT = 3021;
 server.listen(PORT, () => {
+  const gitHash = getGitHash();
+  console.log(`Running git hash version: ${gitHash}`);
   console.log(`Redirect server running on http://localhost:${PORT}`);
 });
 
