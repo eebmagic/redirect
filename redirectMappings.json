@@ -1,0 +1,4 @@
+{
+  "dev": "http://localhost:8080",
+  "prod": "https://production-domain.com"
+} 

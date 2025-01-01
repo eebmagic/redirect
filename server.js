@@ -1,12 +1,12 @@
 const http = require('http');
 const { URL } = require('url');
+const fs = require('fs');
+const path = require('path');
 
-// Define a lookup table for redirects
-const REDIRECT_MAPPINGS = {
-  'dev': 'http://localhost:8080',
-  'prod': 'https://production-domain.com',
-  // Add more environments as needed
-};
+// Load redirect mappings from JSON file
+const REDIRECT_MAPPINGS = JSON.parse(
+  fs.readFileSync(path.join(__dirname, 'redirectMappings.json'), 'utf8')
+);
 
 // Create the server
 const server = http.createServer((req, res) => {
