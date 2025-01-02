@@ -32,9 +32,6 @@ const server = http.createServer((req, res) => {
 
     // Extract the path and query from the encoded URL in the pathname
     try {
-      // Remove the leading slash and parse the remaining URL
-      console.log(`Working with url.pathname: ${url.pathname}`);
-
       const oldTarget = url.pathname.substring(1);
       let encodedUrl;
 
@@ -42,7 +39,9 @@ const server = http.createServer((req, res) => {
       if (oldTarget) {
         try {
           encodedUrl = new URL(oldTarget);
-          mappedUrl.pathname = mappedUrl.pathname + encodedUrl.pathname.replace(/\/$/, '');
+          const basePathname = mappedUrl.pathname.replace(/\/$/, '');
+          const encodedPathname = encodedUrl.pathname.replace(/^\//, '');
+          mappedUrl.pathname = basePathname + '/' + encodedPathname;
         } catch (error) {
           console.log(`[${new Date().toISOString()}] Invalid oldTarget URL: ${oldTarget}`);
         }
