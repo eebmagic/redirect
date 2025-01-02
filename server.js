@@ -28,19 +28,39 @@ const server = http.createServer((req, res) => {
   if (environment && REDIRECT_MAPPINGS[environment]) {
     // Create new URL from the mapped destination
     const mappedUrl = new URL(REDIRECT_MAPPINGS[environment]);
+    mappedUrl.pathname = mappedUrl.pathname.replace(/\/$/, '');
 
     // Extract the path and query from the encoded URL in the pathname
     try {
       // Remove the leading slash and parse the remaining URL
-      const encodedUrl = new URL(url.pathname.substring(1));
+      console.log(`Working with url.pathname: ${url.pathname}`);
 
-      // Copy the path from the encoded URL
-      mappedUrl.pathname = mappedUrl.pathname.replace(/\/$/, '') + encodedUrl.pathname;
+      const oldTarget = url.pathname.substring(1);
+      let encodedUrl;
 
-      // Copy all query parameters from both the encoded URL and the original URL (except 'environment')
+      // Handle details from old target if there is one
+      if (oldTarget) {
+        try {
+          encodedUrl = new URL(oldTarget);
+          mappedUrl.pathname = mappedUrl.pathname + encodedUrl.pathname.replace(/\/$/, '');
+        } catch (error) {
+          console.log(`[${new Date().toISOString()}] Invalid oldTarget URL: ${oldTarget}`);
+        }
+      } else {
+        console.log(`[${new Date().toISOString()}] no old target found`);
+      }
+
+      // Copy all query parameters from both URLs (except 'environment')
       url.searchParams.delete('environment');
-      for (const [key, value] of [...encodedUrl.searchParams, ...url.searchParams]) {
-        mappedUrl.searchParams.append(key, value);
+      const paramSources = [url.searchParams];
+      if (encodedUrl) {
+        paramSources.push(encodedUrl.searchParams);
+      }
+
+      for (const params of paramSources) {
+        for (const [key, value] of params) {
+          mappedUrl.searchParams.append(key, value);
+        }
       }
     } catch (error) {
       console.error('Invalid encoded URL:', error);
