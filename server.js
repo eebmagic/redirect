@@ -13,15 +13,16 @@ const getGitHash = () => {
   }
 };
 
-// Load redirect mappings from JSON file
-const REDIRECT_MAPPINGS = JSON.parse(
-  fs.readFileSync(path.join(__dirname, 'redirectMappings.json'), 'utf8')
-);
 
 // Create the server
 const server = http.createServer((req, res) => {
   const url = new URL(req.url, `http://${req.headers.host}`);
   console.log(`[${new Date().toISOString()}] catching from: ${url}`);
+
+  // Load redirect mappings from JSON file
+  const REDIRECT_MAPPINGS = JSON.parse(
+    fs.readFileSync(path.join(__dirname, 'redirectMappings.json'), 'utf8')
+  );
 
   // Check for special redirect parameter
   const environment = url.searchParams.get('environment');
